@@ -16,8 +16,8 @@
 | Service | Link | Notes |
 | :--- | :--- | :--- |
 | **Frontend Web App** | `https://your-life-rpg.vercel.app` | Production React SPA hosted on Vercel |
-| **Backend REST API** | `https://your-life-rpg-api.onrender.com` | Production Node/Express API hosted on Render |
-| **API Health Status** | `https://your-life-rpg-api.onrender.com/api/health` | Live backend health verification endpoint |
+| **Backend REST API** | [https://life-rpg-f4ds.onrender.com](https://life-rpg-f4ds.onrender.com) | Production Node/Express API hosted on Render |
+| **API Health Status** | [https://life-rpg-f4ds.onrender.com/api/health](https://life-rpg-f4ds.onrender.com/api/health) | Live backend health verification endpoint |
 | **Demo Video (90-180s)**| `https://youtu.be/your-demo-video` | Full walkthrough showing signup, questing & persistence |
 
 ---
