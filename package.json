@@ -1,0 +1,14 @@
+{
+  "name": "life-rpg",
+  "version": "1.0.0",
+  "description": "Life RPG - Turn your daily tasks into an engaging game",
+  "scripts": {
+    "server": "cd server && npm start",
+    "client": "cd client && npm run dev",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "install:all": "npm install && cd server && npm install && cd ../client && npm install"
+  },
+  "dependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
