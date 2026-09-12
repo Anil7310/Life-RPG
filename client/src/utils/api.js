@@ -1,7 +1,7 @@
 const rawApiUrl = import.meta.env.VITE_API_URL;
 const API_BASE = rawApiUrl
   ? (rawApiUrl.endsWith('/api') ? rawApiUrl : `${rawApiUrl.replace(/\/+$/, '')}/api`)
-  : '/api';
+  : (import.meta.env.DEV ? '/api' : 'https://life-rpg-f4ds.onrender.com/api');
 
 export const api = {
   getToken() {
