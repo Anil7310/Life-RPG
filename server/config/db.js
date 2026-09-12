@@ -61,49 +61,31 @@ export const localDB = new LocalStorageDB();
 export let isMongoConnected = false;
 
 export const connectDB = async () => {
-  const isProduction = process.env.NODE_ENV === 'production';
-
   const mongoURI =
     process.env.DATABASE_URL ||
     process.env.MONGODB_URI;
 
-  // Production must have a real MongoDB connection string.
-  if (isProduction && !mongoURI) {
-    console.error(
-      '[Database] ERROR: DATABASE_URL or MONGODB_URI is required in production.'
-    );
-    process.exit(1);
+  if (!mongoURI) {
+    console.log('[Database] No MONGODB_URI or DATABASE_URL provided in environment.');
+    console.log('[Database] Using resilient Local Storage Database.');
+    console.log('           (To connect to MongoDB Atlas, add MONGODB_URI in Render/hosting dashboard)');
+    isMongoConnected = false;
+    return;
   }
 
-  // Local development can use the local MongoDB instance.
-  const connectionURI =
-    mongoURI || 'mongodb://127.0.0.1:27017/liferpg';
-
   try {
-    await mongoose.connect(connectionURI, {
-      serverSelectionTimeoutMS: 10000,
-      connectTimeoutMS: 10000
+    console.log('[Database] Attempting connection to hosted database...');
+    await mongoose.connect(mongoURI, {
+      serverSelectionTimeoutMS: 5000,
+      connectTimeoutMS: 5000
     });
 
     isMongoConnected = true;
-
-    console.log('[Database] MongoDB connected successfully.');
+    console.log('✨ [Database] MongoDB Atlas connected successfully!');
   } catch (error) {
     isMongoConnected = false;
-
-    if (isProduction) {
-      console.error('[Database] MongoDB connection failed.');
-      console.error('[Database] Production server cannot start without MongoDB.');
-      console.error('[Database] Error:', error.message);
-
-      process.exit(1);
-    }
-
-    console.warn(
-      '[Database] MongoDB unavailable in development.'
-    );
-    console.warn(
-      '[Database] Using local JSON fallback database.'
-    );
+    console.warn('[Database] Remote MongoDB connection failed: ' + error.message);
+    console.log('⚡ [Database] Falling back to resilient Local Storage Database so server remains online.');
+    console.log('           (Check your MongoDB Atlas IP whitelist [0.0.0.0/0] and credentials if needed)');
   }
 };
