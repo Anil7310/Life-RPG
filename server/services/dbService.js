@@ -117,13 +117,14 @@ export const dbService = {
       const quest = new Quest(questData);
       return await quest.save();
     }
-    const quest = {
-      _id: crypto.randomUUID(),
-      isCompleted: false,
-      completedAt: null,
-      createdAt: new Date().toISOString(),
-      ...questData
-    };
+   const quest = {
+  _id: crypto.randomUUID(),
+  isCompleted: false,
+  rewardClaimed: false,
+  completedAt: null,
+  createdAt: new Date().toISOString(),
+  ...questData
+};
     localDB.data.quests.unshift(quest);
     localDB.save();
     return quest;
