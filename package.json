@@ -9,6 +9,7 @@
     "build": "npm --prefix client run build",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "test": "node server/test_e2e.js",
+    "monitor": "node scripts/monitor.js",
     "install:all": "npm install && npm --prefix server install && npm --prefix client install"
   },
   "engines": {

@@ -1,0 +1,37 @@
+name: Continuous Integration & Build Validation
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  validate-and-test:
+    name: Build & Test Fullstack App
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: ⚙️ Setup Node.js 18
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'npm'
+
+      - name: 📦 Install All Dependencies
+        run: npm run install:all
+
+      - name: 🏗️ Build Frontend (Vite)
+        run: npm run build
+
+      - name: 🧪 Run Backend E2E Test Suite
+        env:
+          PORT: 5001
+          JWT_SECRET: test-ci-secret-jwt-key
+        run: |
+          npm --prefix server start &
+          sleep 3
+          npm test

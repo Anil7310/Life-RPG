@@ -1,0 +1,28 @@
+name: 24/7 Render Keep-Alive & Health Ping
+
+on:
+  schedule:
+    # Run every 10 minutes to prevent Render free tier spin-down
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+  push:
+    branches: [main, master]
+
+jobs:
+  ping-backend:
+    name: Ping Render Live Backend
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🌐 Ping Live Backend API
+        run: |
+          echo "Pinging Live Backend at https://life-rpg-f4ds.onrender.com/api/health"
+          RESPONSE=$(curl -s -w "\nHTTP_STATUS:%{http_code}\nTIME_TOTAL:%{time_total}s" https://life-rpg-f4ds.onrender.com/api/health)
+          echo "$RESPONSE"
+          
+          STATUS=$(echo "$RESPONSE" | grep "HTTP_STATUS" | cut -d':' -f2)
+          if [ "$STATUS" -ne 200 ]; then
+            echo "❌ Backend health check failed with HTTP $STATUS"
+            exit 1
+          fi
+          echo "✅ Backend is healthy, active, and awake!"
