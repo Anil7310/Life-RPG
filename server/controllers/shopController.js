@@ -112,25 +112,29 @@ export const createCustomReward = async (req, res) => {
 export const claimCustomReward = async (req, res) => {
   try {
     const userId = req.user._id.toString();
-    const user = req.user;
     const { rewardId } = req.params;
 
+    const freshUser = await dbService.findUserById(userId);
+    if (!freshUser) {
+      return res.status(404).json({ success: false, message: 'User not found.' });
+    }
+
     const { custom } = await dbService.getShopItems(userId);
-    const reward = custom.find(r => (r._id?.toString() === rewardId || r.id === rewardId));
+    const reward = custom.find(r => (r._id?.toString() === rewardId || r.id === rewardId || r._id === rewardId));
 
     if (!reward) {
       return res.status(404).json({ success: false, message: 'Custom reward not found.' });
     }
 
-    if ((user.coins || 0) < reward.cost) {
+    if ((freshUser.coins || 0) < reward.cost) {
       return res.status(400).json({
         success: false,
-        message: `Insufficient coins! Need ${reward.cost} coins (You have ${user.coins || 0}).`
+        message: `Insufficient coins! Need ${reward.cost} coins (You have ${freshUser.coins || 0}).`
       });
     }
 
     const updatedUser = await dbService.updateUser(userId, {
-      coins: user.coins - reward.cost
+      coins: freshUser.coins - reward.cost
     });
 
     const { password: _, ...sanitizedUser } = updatedUser.toObject ? updatedUser.toObject() : updatedUser;

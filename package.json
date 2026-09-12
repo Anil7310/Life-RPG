@@ -3,10 +3,16 @@
   "version": "1.0.0",
   "description": "Life RPG - Turn your daily tasks into an engaging game",
   "scripts": {
-    "server": "cd server && npm start",
-    "client": "cd client && npm run dev",
+    "start": "node server/index.js",
+    "server": "npm --prefix server start",
+    "client": "npm --prefix client run dev",
+    "build": "npm --prefix client run build",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
-    "install:all": "npm install && cd server && npm install && cd ../client && npm install"
+    "test": "node server/test_e2e.js",
+    "install:all": "npm install && npm --prefix server install && npm --prefix client install"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   },
   "dependencies": {
     "concurrently": "^8.2.2"

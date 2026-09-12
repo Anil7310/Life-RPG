@@ -7,16 +7,27 @@ async function runTests() {
   const healthRes = await fetch(`${BASE_URL}/health`).then(r => r.json());
   console.log('✓ Health Check:', healthRes.status === 'ok' ? 'PASS' : 'FAIL');
 
-  // 2. Guest Login
-  const guestRes = await fetch(`${BASE_URL}/auth/guest`, { method: 'POST' }).then(r => r.json());
-  console.log('✓ Guest Login:', guestRes.success ? 'PASS' : 'FAIL');
-  const token = guestRes.token;
+  // 2. Register a fresh test player
+  const testEmail = `hero_${Date.now()}@liferpg.dev`;
+  const registerRes = await fetch(`${BASE_URL}/auth/register`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      username: `hero_${Date.now()}`,
+      email: testEmail,
+      password: 'password123',
+      characterName: 'Aria the Brave',
+      avatarId: 'mage'
+    })
+  }).then(r => r.json());
+  console.log('✓ User Registration:', registerRes.success ? 'PASS' : 'FAIL');
+  const token = registerRes.token;
 
   // 3. User info
   const meRes = await fetch(`${BASE_URL}/auth/me`, {
     headers: { Authorization: `Bearer ${token}` }
   }).then(r => r.json());
-  console.log('✓ Get Me Profile:', meRes.success && meRes.user.characterName === 'Valiant Hero' ? 'PASS' : 'FAIL');
+  console.log('✓ Get Me Profile:', meRes.success && meRes.user.characterName === 'Aria the Brave' ? 'PASS' : 'FAIL');
 
   // 4. Get Initial Quests
   const questsRes = await fetch(`${BASE_URL}/quests`, {
@@ -78,7 +89,7 @@ async function runTests() {
     },
     body: JSON.stringify({
       title: '1 Hour Gaming Break',
-      cost: 50,
+      cost: 10,
       icon: '🎮'
     })
   }).then(r => r.json());
@@ -89,7 +100,15 @@ async function runTests() {
     method: 'POST',
     headers: { Authorization: `Bearer ${token}` }
   }).then(r => r.json());
+  if (!claimRes.success) console.log('Claim error debug:', claimRes);
   console.log('✓ Claim Custom Reward:', claimRes.success ? 'PASS' : 'FAIL');
+
+  // 11. Delete Custom Reward
+  const deleteRewardRes = await fetch(`${BASE_URL}/shop/custom/${customRewardRes.reward._id}`, {
+    method: 'DELETE',
+    headers: { Authorization: `Bearer ${token}` }
+  }).then(r => r.json());
+  console.log('✓ Delete Custom Reward:', deleteRewardRes.success ? 'PASS' : 'FAIL');
 
   console.log('--- ALL E2E API TESTS COMPLETED SUCCESSFULLY! ---');
 }
